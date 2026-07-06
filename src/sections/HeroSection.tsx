@@ -1,40 +1,13 @@
-import { Suspense, lazy, useMemo, useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { useIsDesktop, usePrefersReducedMotion } from '../hooks/use-media-query'
 
-const IcosahedronScene = lazy(() => import('../components/IcosahedronScene'))
-
-/** Delay 3D scene load by 1.5s to let page render first */
-function Delayed3DScene() {
-  const [show, setShow] = useState(false)
-  useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 1500)
-    return () => clearTimeout(timer)
-  }, [])
-
-  if (!show) return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div className="w-24 h-24 border-2 rounded-full animate-pulse" style={{ borderColor: 'rgba(0, 191, 255, 0.15)' }} />
-    </div>
-  )
-
-  return (
-    <Suspense fallback={
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-24 h-24 border-2 rounded-full animate-pulse" style={{ borderColor: 'rgba(0, 191, 255, 0.15)' }} />
-      </div>
-    }>
-      <IcosahedronScene />
-    </Suspense>
-  )
-}
-
-/** Lightweight CSS fallback for mobile/tablet — no WebGL */
+/** Лёгкий CSS-фолбэк — без WebGL */
 function HeroFallback() {
   const reducedMotion = usePrefersReducedMotion()
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Central glow orb */}
+      {/* Центральное свечение */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full"
         style={{
@@ -42,14 +15,14 @@ function HeroFallback() {
           animation: reducedMotion ? 'none' : 'pulse-glow 4s ease-in-out infinite',
         }}
       />
-      {/* Accent ring */}
+      {/* Акцентное кольцо */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] rounded-full border border-[#00BFFF]/10"
         style={{
           animation: reducedMotion ? 'none' : 'spin 60s linear infinite',
         }}
       />
-      {/* Small particles */}
+      {/* Частицы */}
       {useMemo(() => Array.from({ length: 12 }, (_, i) => {
         const angle = (i / 12) * Math.PI * 2
         const radius = 120 + Math.random() * 80
@@ -70,7 +43,7 @@ function HeroFallback() {
           />
         )
       }), [reducedMotion])}
-      {/* Grid */}
+      {/* Сетка */}
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -99,7 +72,7 @@ export default function HeroSection() {
       className="relative min-h-[100dvh] flex items-center justify-center overflow-x-hidden"
       style={{ background: '#0B0C10' }}
     >
-      {/* Ambient background glow */}
+      {/* Фоновое свечение */}
       <div
         className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-full pointer-events-none"
         style={{
@@ -107,7 +80,7 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Subtle grid pattern — mobile only, hidden on desktop (desktop gets it from 3D scene or fallback) */}
+      {/* Сетка на мобиле */}
       {!isDesktop && (
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.03]"
@@ -121,15 +94,10 @@ export default function HeroSection() {
         />
       )}
 
-      {/* 3D Background — desktop only with lazy loading */}
-      {isDesktop ? (
-        <Delayed3DScene />
-      ) : (
-        <HeroFallback />
-      )}
-      {/* Note: 3D scene loads with 1.5s delay via Delayed3DScene */}
+      {/* Фон — всегда CSS-фолбэк, без WebGL */}
+      <HeroFallback />
 
-      {/* Gradient overlay for depth */}
+      {/* Градиент сверху вниз для глубины */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -137,10 +105,9 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Content */}
+      {/* Контент */}
       <div className="relative z-10 abi-container pt-24 pb-24">
         <div className="flex justify-center">
-          {/* Text Content — full width centered after image removal */}
           <div className="max-w-2xl text-center">
             <div
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6"
@@ -179,7 +146,6 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            {/* Key offer */}
             <p
               className="text-base sm:text-lg leading-relaxed mb-4 max-w-xl"
               style={{ color: '#C5C6C7' }}
@@ -187,7 +153,6 @@ export default function HeroSection() {
               Помогаем компаниям развиваться в мире, где скорость изменений — главное конкурентное преимущество
             </p>
 
-            {/* Slogan */}
             <p
               className="text-xl sm:text-2xl font-light italic mb-6"
               style={{
@@ -222,7 +187,6 @@ export default function HeroSection() {
               </button>
             </div>
 
-            {/* Stats */}
             <div 
               className="grid grid-cols-3 gap-6 mt-12 pt-8"
               style={{ borderTop: '1px solid rgba(0, 191, 255, 0.1)' }}
