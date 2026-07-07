@@ -1,243 +1,109 @@
-import { useMemo } from 'react'
-import { useIsDesktop, usePrefersReducedMotion } from '../hooks/use-media-query'
+import { memo } from 'react'
+import { Button } from '@/components/ui/button'
 
-/** Лёгкий CSS-фолбэк — без WebGL */
-function HeroFallback() {
-  const reducedMotion = usePrefersReducedMotion()
+const base = import.meta.env.BASE_URL
 
+export const HeroSection = memo(function HeroSection() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Центральное свечение */}
+    <section className="relative overflow-hidden bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
+      {/* Фоновые элементы */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full"
+        className="pointer-events-none absolute inset-0 opacity-60"
         style={{
-          background: 'radial-gradient(circle, rgba(0, 100, 180, 0.15) 0%, rgba(0, 60, 120, 0.06) 40%, transparent 70%)',
-          animation: reducedMotion ? 'none' : 'pulse-glow 4s ease-in-out infinite',
-        }}
-      />
-      {/* Акцентное кольцо */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] rounded-full border border-[#00BFFF]/10"
-        style={{
-          animation: reducedMotion ? 'none' : 'spin 60s linear infinite',
-        }}
-      />
-      {/* Частицы */}
-      {useMemo(() => Array.from({ length: 12 }, (_, i) => {
-        const angle = (i / 12) * Math.PI * 2
-        const radius = 120 + Math.random() * 80
-        const x = Math.cos(angle) * radius
-        const y = Math.sin(angle) * radius
-        return (
-          <div
-            key={i}
-            className="absolute top-1/2 left-1/2 w-1 h-1 rounded-full"
-            style={{
-              background: i % 3 === 0 ? '#00FFFF' : '#00BFFF',
-              opacity: 0.3 + Math.random() * 0.3,
-              transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-              boxShadow: `0 0 6px ${i % 3 === 0 ? 'rgba(0,255,255,0.4)' : 'rgba(0,191,255,0.3)'}`,
-              animation: reducedMotion ? 'none' : `pulse-glow ${2 + Math.random() * 3}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 2}s`,
-            }}
-          />
-        )
-      }), [reducedMotion])}
-      {/* Сетка */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(0, 191, 255, 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 191, 255, 0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-        }}
-      />
-    </div>
-  )
-}
-
-export default function HeroSection() {
-  const scrollTo = (id: string) => {
-    const el = document.querySelector(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  const isDesktop = useIsDesktop()
-
-  return (
-    <section
-      id="hero"
-      className="relative min-h-[100dvh] flex items-center justify-center overflow-x-hidden"
-      style={{ background: '#0B0C10' }}
-    >
-      {/* Фоновое свечение */}
-      <div
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(0, 191, 255, 0.08) 0%, rgba(102, 252, 241, 0.03) 30%, transparent 60%)',
+          backgroundImage: `radial-gradient(circle at 10% 10%, rgba(56,189,248,0.20) 0, transparent 60%),
+                            radial-gradient(circle at 90% 20%, rgba(94,234,212,0.18) 0, transparent 55%),
+                            radial-gradient(circle at 15% 80%, rgba(59,130,246,0.16) 0, transparent 55%)`,
         }}
       />
 
-      {/* Сетка на мобиле */}
-      {!isDesktop && (
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0, 191, 255, 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 191, 255, 0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px',
-          }}
-        />
-      )}
-
-      {/* Фон — всегда CSS-фолбэк, без WebGL */}
-      <HeroFallback />
-
-      {/* Градиент сверху вниз для глубины */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to bottom, transparent 50%, #0B0C10 95%)',
-        }}
-      />
-
-      {/* Контент */}
-      <div className="relative z-10 abi-container pt-24 pb-24">
-        <div className="flex justify-center">
-          <div className="max-w-2xl text-center">
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6"
-              style={{
-                background: 'rgba(0, 191, 255, 0.08)',
-                border: '1px solid rgba(0, 191, 255, 0.2)',
-                backdropFilter: isDesktop ? 'blur(10px)' : 'none',
-              }}
-            >
-              <span
-                className="w-2 h-2 rounded-full animate-pulse"
-                style={{ background: '#00BFFF', boxShadow: '0 0 8px #00BFFF' }}
+      <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-20 pt-28 md:flex-row md:items-center md:gap-16">
+        {/* Левая колонка — текст и логотип */}
+        <div className="relative z-10 flex-1 space-y-8">
+          {/* Логотип */}
+          <div className="flex items-center gap-4">
+            <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-cyan-400/40 bg-slate-900/60 shadow-lg shadow-cyan-500/30">
+              <img
+                src={`${base}assets/abi-logo.png`}
+                alt="ABI Team логотип"
+                loading="lazy"
+                width={56}
+                height={56}
+                className="h-full w-full object-contain"
               />
-              <span className="text-sm font-medium" style={{ color: '#00BFFF' }}>
-                ООО «ЭЙБИАЙ» — российская IT-компания
-              </span>
             </div>
-
-            <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-snug mb-4 pb-2"
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                color: '#FFFFFF',
-              }}
-            >
-              Архитекторы{' '}
-              <span
-                className="block mt-2 neon-text pb-1"
-                style={{
-                  background: 'linear-gradient(135deg, #00BFFF, #66FCF1)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                адаптивной цифровой среды
-              </span>
-            </h1>
-
-            <p
-              className="text-base sm:text-lg leading-relaxed mb-4 max-w-xl"
-              style={{ color: '#C5C6C7' }}
-            >
-              Помогаем компаниям развиваться в мире, где скорость изменений — главное конкурентное преимущество
-            </p>
-
-            <p
-              className="text-xl sm:text-2xl font-light italic mb-6"
-              style={{
-                color: '#C5C6C7',
-                fontFamily: "'Playfair Display', serif",
-              }}
-            >
-              Там, где была пустота, появляется рабочая система.
-            </p>
-
-            <p
-              className="text-base sm:text-lg leading-relaxed mb-8 max-w-xl"
-              style={{ color: '#888' }}
-            >
-              ABI Team создаёт для бизнеса собственные цифровые системы управления
-              — не шаблонные CRM, а адаптивные решения под реальные процессы
-              компании.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => scrollTo('#contact')}
-                className="abi-btn-primary"
-              >
-                Запросить аудит процессов и AI-возможностей
-              </button>
-              <button
-                onClick={() => scrollTo('#contact')}
-                className="abi-btn-outline"
-              >
-                Обсудить проект
-              </button>
-            </div>
-
-            <div 
-              className="grid grid-cols-3 gap-6 mt-12 pt-8"
-              style={{ borderTop: '1px solid rgba(0, 191, 255, 0.1)' }}
-            >
-              <div>
-                <div
-                  className="text-2xl sm:text-3xl font-bold neon-text-subtle"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    color: '#00BFFF',
-                  }}
-                >
-                  4
-                </div>
-                <div className="text-sm mt-1" style={{ color: '#888' }}>
-                  Направления
-                </div>
-              </div>
-              <div>
-                <div
-                  className="text-2xl sm:text-3xl font-bold neon-text-subtle"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    color: '#00BFFF',
-                  }}
-                >
-                  AI
-                </div>
-                <div className="text-sm mt-1" style={{ color: '#888' }}>
-                  Интеграции
-                </div>
-              </div>
-              <div>
-                <div
-                  className="text-2xl sm:text-3xl font-bold neon-text-subtle"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    color: '#00BFFF',
-                  }}
-                >
-                  360°
-                </div>
-                <div className="text-sm mt-1" style={{ color: '#888' }}>
-                  Подход
-                </div>
-              </div>
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300/80">
+                ABI Team
+              </p>
+              <p className="text-sm text-slate-300">
+                Архитекторы адаптивной цифровой среды бизнеса
+              </p>
             </div>
           </div>
 
+          {/* Основной текст */}
+          <div className="space-y-6">
+            <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl lg:text-5xl">
+              Цифровая экосистема,
+              <br />
+              которая работает **на ваш бизнес**
+            </h1>
+
+            <p className="max-w-xl text-sm text-slate-300 sm:text-base">
+              Мы проектируем и внедряем адаптивную цифровую архитектуру для компаний,
+              которым важны управляемость, прозрачная аналитика и устойчивый рост.
+              От первых задач до масштабирования — один связный цифровой контур.
+            </p>
+          </div>
+
+          {/* Кнопки действий */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <Button size="lg" className="bg-cyan-500 text-slate-950 hover:bg-cyan-400">
+              Обсудить проект
+            </Button>
+            <Button
+              size="lg"
+              variant="ghost"
+              className="border border-slate-700/70 bg-slate-900/60 text-slate-100 hover:bg-slate-800"
+              asChild
+            >
+              <a href="#cases">Смотреть кейсы</a>
+            </Button>
+          </div>
+
+          {/* PDF — код действия */}
+          <div className="flex items-center gap-2 pt-4 text-xs text-slate-400">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-slate-700 bg-slate-900/70 text-[0.65rem] text-slate-300">
+              PDF
+            </span>
+            <a
+              href={`${base}assets/kod-deistviya.pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-2 hover:text-cyan-300 hover:underline"
+            >
+              Код действия ABI Team: как мы выстраиваем проекты
+            </a>
+          </div>
+        </div>
+
+        {/* Правая колонка — иллюстрация */}
+        <div className="relative z-10 mt-6 flex flex-1 justify-center md:mt-0">
+          <div className="relative h-[260px] w-full max-w-md overflow-hidden rounded-3xl border border-cyan-400/40 bg-slate-950/60 shadow-2xl shadow-cyan-500/30">
+            <img
+              src={`${base}assets/hero-cyborg-suit.png`}
+              alt="Визуальная метафора адаптивной цифровой архитектуры"
+              loading="lazy"
+              width={640}
+              height={480}
+              className="h-full w-full object-cover"
+            />
+
+            {/* Лёгкий декоративный слой сверху картинки */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
+          </div>
         </div>
       </div>
     </section>
   )
-}
+})
